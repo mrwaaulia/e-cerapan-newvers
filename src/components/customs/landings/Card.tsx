@@ -16,7 +16,7 @@ export function CreatorCard({
 }: CreatorCardProps) {
     return (
         <Card
-            className={`w-[300px] h-[440px] p-6 bg-white rounded-3xl shadow-sm border border-gray-100 ${className || ""}`}
+            className={`w-2xs h-100  bg-white rounded-3xl shadow-sm border border-gray-100 ${className || ""}`}
         >   
             <div className="flex flex-1 flex-col gap-3">
                 <Card.Header className="flex flex-col items-start">

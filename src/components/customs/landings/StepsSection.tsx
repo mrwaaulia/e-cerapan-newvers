@@ -1,10 +1,10 @@
-import { CreatorCard } from "@/components/Card";
+import { CreatorCard } from "@/components/customs/landings/Card";
 import { Check } from 'lucide-react'
 
 export default function StepsSection() {
   return (
-    <section className="bg-blue-500 py-14 md:py-20 rounded-tl-[100px] rounded-br-[100px]">
-      <div className="mx-auto max-w-content px-6 text-center text-white">
+    <section className="  md:py-20">
+      <div className="mx-auto max-w-content px-6 py-15 text-center text-white bg-blue-500 rounded-tl-[100px] rounded-br-[100px]">
         <div>
           <h2 className="text-2xl font-bold md:text-3xl">
             3 Langkah Kerja E-Cerapan
@@ -16,7 +16,7 @@ export default function StepsSection() {
         </div>
 
 
-        <div className="mt-10 mx-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="flex flex-col items-center justify-center gap-6 pt-10 sm:flex-row sm:gap-8 lg:gap-12">
           <CreatorCard
             steps={1}
             title="Masukkan Pengukuran"

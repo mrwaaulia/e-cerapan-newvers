@@ -1,9 +1,9 @@
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import AboutSection from "@/components/AboutSection";
-import StepsSection from "@/components/StepsSection";
-import ServiceSection from "@/components/ServiceSection";
-import CtaSection from "@/components/CtaSection";
+import Hero from "@/components/customs/landings/Hero";
+import AboutSection from "@/components/customs/landings/AboutSection";
+import StepsSection from "@/components/customs/landings/StepsSection";
+import ServiceSection from "@/components/customs/landings/ServiceSection";
+import CtaSection from "@/components/customs/landings/CtaSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
