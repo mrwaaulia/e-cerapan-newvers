@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Breadcrumb from '@/components/e-cerapan/ui/Breadcrumb';
 import Stepper from '@/components/e-cerapan/ui/Stepper';
 import StatusBanner from '@/components/e-cerapan/ui/StatusBanner';
 import StatCard from '@/components/e-cerapan/ui/StatCard';
+import { WizardStepProps } from '@/types/wizard';
 
 // ─── Mock Data (Replace with data from state/API) ────────────
 
@@ -45,13 +46,41 @@ const CHECKLIST_RESULTS = [
     { no: 12, deskripsi: 'Apakah pada PU BBM tidak ditemukan adanya kebocoran atau rembesan cairan?', penilaian: 'Ya' },
 ];
 
-export default function HasilPemeriksaanAwalPage() {
+export default function HasilPemeriksaanAwalPage({
+    formData,
+    updateFormData,
+    nextStep,
+    prevStep,
+}: Partial<WizardStepProps> = {}) {
     const router = useRouter();
 
+    useEffect(() => {
+        if (!updateFormData) {
+            router.replace('/e-cerapan');
+        }
+    }, [updateFormData, router]);
+
+    const identitasAlat = {
+        merek: formData?.step1?.identitasUTTP?.merek || IDENTITAS_ALAT.merek,
+        tipe: formData?.step1?.identitasUTTP?.tipeModel || IDENTITAS_ALAT.tipe,
+        noSeri: formData?.step1?.identitasUTTP?.nomorSeri || IDENTITAS_ALAT.noSeri,
+        noSPBU: formData?.step1?.dataPengujian?.noSPBU || IDENTITAS_ALAT.noSPBU,
+        namaSPBU: formData?.step1?.dataPengujian?.namaPemilik || IDENTITAS_ALAT.namaSPBU,
+        nomorOrder: formData?.step1?.dataPengujian?.nomorOrder || IDENTITAS_ALAT.nomorOrder,
+    };
+
+    const checklistResults = formData?.step1?.checklist && formData.step1.checklist.length > 0
+        ? formData.step1.checklist.map((item, index) => ({
+            no: item.no || index + 1,
+            deskripsi: item.uraian || `Parameter ${index + 1}`,
+            penilaian: item.penilaian === 'ya' ? 'Ya' : item.penilaian === 'tidak' ? 'Tidak' : '-',
+        }))
+        : CHECKLIST_RESULTS;
+
     // Derived statistics
-    const totalParameter = CHECKLIST_RESULTS.length;
-    const memenuhiCount = CHECKLIST_RESULTS.filter(item => item.penilaian === 'Ya').length;
-    const tidakMemenuhiCount = CHECKLIST_RESULTS.filter(item => item.penilaian === 'Tidak').length;
+    const totalParameter = checklistResults.length;
+    const memenuhiCount = checklistResults.filter(item => item.penilaian === 'Ya').length;
+    const tidakMemenuhiCount = checklistResults.filter(item => item.penilaian === 'Tidak').length;
     const isLolos = tidakMemenuhiCount === 0;
 
     return (
@@ -103,7 +132,7 @@ export default function HasilPemeriksaanAwalPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {CHECKLIST_RESULTS.map((item, index) => (
+                                {checklistResults.map((item, index) => (
                                     <tr key={index} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50">
                                         <td className="py-4 px-6 text-gray-800 align-top font-semibold">{item.no}</td>
                                         <td className="py-4 px-6 text-gray-700 align-top whitespace-pre-line leading-relaxed">
@@ -129,27 +158,27 @@ export default function HasilPemeriksaanAwalPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-y-6 gap-x-8 text-[15px]">
                         <div className="flex gap-2">
                             <span className="text-gray-500 w-24">Merek:</span>
-                            <span className="font-semibold text-gray-800">{IDENTITAS_ALAT.merek}</span>
+                            <span className="font-semibold text-gray-800">{identitasAlat.merek}</span>
                         </div>
                         <div className="flex gap-2">
                             <span className="text-gray-500 w-24">Tipe:</span>
-                            <span className="font-semibold text-gray-800">{IDENTITAS_ALAT.tipe}</span>
+                            <span className="font-semibold text-gray-800">{identitasAlat.tipe}</span>
                         </div>
                         <div className="flex gap-2">
                             <span className="text-gray-500 w-24">No. Seri:</span>
-                            <span className="font-semibold text-gray-800">{IDENTITAS_ALAT.noSeri}</span>
+                            <span className="font-semibold text-gray-800">{identitasAlat.noSeri}</span>
                         </div>
                         <div className="flex gap-2">
                             <span className="text-gray-500 w-24">No. SPBU:</span>
-                            <span className="font-semibold text-gray-800">{IDENTITAS_ALAT.noSPBU}</span>
+                            <span className="font-semibold text-gray-800">{identitasAlat.noSPBU}</span>
                         </div>
                         <div className="flex gap-2">
                             <span className="text-gray-500 w-24">No. SPBU:</span>
-                            <span className="font-semibold text-gray-800">{IDENTITAS_ALAT.namaSPBU}</span>
+                            <span className="font-semibold text-gray-800">{identitasAlat.namaSPBU}</span>
                         </div>
                         <div className="flex gap-2">
                             <span className="text-gray-500 w-24">Nomor Order:</span>
-                            <span className="font-semibold text-gray-800">{IDENTITAS_ALAT.nomorOrder}</span>
+                            <span className="font-semibold text-gray-800">{identitasAlat.nomorOrder}</span>
                         </div>
                     </div>
                 </div>
@@ -158,14 +187,28 @@ export default function HasilPemeriksaanAwalPage() {
                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                     <button
                         type="button"
-                        onClick={() => router.push('/e-cerapan/pemeriksaanawal')}
+                        onClick={() => {
+                            if (prevStep) {
+                                prevStep();
+                            } else {
+                                router.push('/e-cerapan/pemeriksaanawal');
+                            }
+                        }}
                         className="w-full sm:w-1/2 py-4 rounded-xl text-[16px] font-semibold text-gray-700 bg-transparent border-2 border-gray-300 hover:bg-gray-50 transition-all active:scale-[0.99]"
                     >
                         Kembali ke Pemeriksaan
                     </button>
                     <button
                         type="button"
-                        onClick={() => isLolos && router.push('/e-cerapan/pengujian')}
+                        onClick={() => {
+                            if (isLolos) {
+                                if (nextStep) {
+                                    nextStep();
+                                } else {
+                                    router.push('/e-cerapan/pengujian');
+                                }
+                            }
+                        }}
                         disabled={!isLolos}
                         className={`w-full sm:w-1/2 py-4 rounded-xl text-[16px] font-semibold transition-all ${isLolos
                             ? 'bg-[#2479BC] text-white hover:bg-[#1d6aa6] active:scale-[0.99] cursor-pointer'

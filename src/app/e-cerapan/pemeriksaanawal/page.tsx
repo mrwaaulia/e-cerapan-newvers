@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Calendar, AlertTriangle } from 'lucide-react';
 import Breadcrumb from '@/components/e-cerapan/ui/Breadcrumb';
 import PageHeader from '@/components/e-cerapan/ui/PageHeader';
 import FormSection from '@/components/e-cerapan/ui/FormSection';
 import FormField from '@/components/e-cerapan/ui/FormField';
 import Stepper from '@/components/e-cerapan/ui/Stepper';
+import { WizardStepProps, Step1Data } from '@/types/wizard';
 
 
 interface DataPengujian {
@@ -63,38 +65,56 @@ const INPUT_CLASS =
   'w-full px-4 py-3 rounded-lg border border-gray-300 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2479BC]/30 focus:border-[#2479BC] transition-colors';
 
 
-export default function PemeriksaanAwalPage() {
+export default function PemeriksaanAwalPage({
+  formData,
+  updateFormData,
+  nextStep,
+  prevStep,
+}: Partial<WizardStepProps> = {}) {
+  const router = useRouter();
 
-  const [dataPengujian, setDataPengujian] = useState<DataPengujian>({
-    nomorOrder: '',
-    namaPemilik: '',
-    nomorSIML: '',
-    contactPerson: '',
-    alamatTerpasang: '',
-    namaPompaUkur: '',
-    tanggalPengujian: '',
-    namaPetugas1: '',
-    namaPetugas2: '',
+  useEffect(() => {
+    if (!updateFormData) {
+      router.replace('/e-cerapan');
+    }
+  }, [updateFormData, router]);
+
+  const [dataPengujian, setDataPengujian] = useState<DataPengujian>(() => ({
+    nomorOrder: formData?.step1?.dataPengujian?.nomorOrder || '',
+    namaPemilik: formData?.step1?.dataPengujian?.namaPemilik || '',
+    nomorSIML: formData?.step1?.dataPengujian?.nomorSIML || '',
+    contactPerson: formData?.step1?.dataPengujian?.contactPerson || '',
+    alamatTerpasang: formData?.step1?.dataPengujian?.alamatTerpasang || '',
+    namaPompaUkur: formData?.step1?.dataPengujian?.namaPompaUkur || '',
+    tanggalPengujian: formData?.step1?.dataPengujian?.tanggalPengujian || '',
+    namaPetugas1: formData?.step1?.dataPengujian?.namaPetugas1 || '',
+    namaPetugas2: formData?.step1?.dataPengujian?.namaPetugas2 || '',
+  }));
+
+  const [identitasUTTP, setIdentitasUTTP] = useState<IdentitasUTTP>(() => ({
+    merek: formData?.step1?.identitasUTTP?.merek || '',
+    tipeModel: formData?.step1?.identitasUTTP?.tipeModel || '',
+    nomorSeri: formData?.step1?.identitasUTTP?.nomorSeri || '',
+    jumlahNozzle: formData?.step1?.identitasUTTP?.jumlahNozzle || '',
+    tahunPembuatan: formData?.step1?.identitasUTTP?.tahunPembuatan || '',
+  }));
+
+  const [kondisiOperasi, setKondisiOperasi] = useState<KondisiOperasi>(() => ({
+    ujiAlkMaksimum: formData?.step1?.kondisiOperasi?.ujiAlkMaksimum || '',
+    ujiAlkMinimum: formData?.step1?.kondisiOperasi?.ujiAlkMinimum || '',
+    mfr: formData?.step1?.kondisiOperasi?.mfr || '',
+    nomorPencacahTipe: formData?.step1?.kondisiOperasi?.nomorPencacahTipe || '',
+  }));
+
+  const [checklist, setChecklist] = useState<ChecklistItem[]>(() => {
+    if (formData?.step1?.checklist && formData.step1.checklist.length === CHECKLIST_QUESTIONS.length) {
+      return formData.step1.checklist.map((item) => ({
+        penilaian: item.penilaian,
+        keterangan: item.keterangan || '',
+      }));
+    }
+    return CHECKLIST_QUESTIONS.map(() => ({ penilaian: null, keterangan: '' }));
   });
-
-  const [identitasUTTP, setIdentitasUTTP] = useState<IdentitasUTTP>({
-    merek: '',
-    tipeModel: '',
-    nomorSeri: '',
-    jumlahNozzle: '',
-    tahunPembuatan: '',
-  });
-
-  const [kondisiOperasi, setKondisiOperasi] = useState<KondisiOperasi>({
-    ujiAlkMaksimum: '',
-    ujiAlkMinimum: '',
-    mfr: '',
-    nomorPencacahTipe: '',
-  });
-
-  const [checklist, setChecklist] = useState<ChecklistItem[]>(
-    CHECKLIST_QUESTIONS.map(() => ({ penilaian: null, keterangan: '' }))
-  );
 
   // ─── Handlers ────────────────────────────────────────────────
 
@@ -118,11 +138,48 @@ export default function PemeriksaanAwalPage() {
     });
   };
 
+  // ─── Check if all mandatory fields and checklist items are filled ───
+
+  const isDataPengujianFilled =
+    Boolean(dataPengujian.nomorOrder.trim()) &&
+    Boolean(dataPengujian.namaPemilik.trim()) &&
+    Boolean(dataPengujian.nomorSIML.trim()) &&
+    Boolean(dataPengujian.contactPerson.trim()) &&
+    Boolean(dataPengujian.namaPompaUkur.trim()) &&
+    Boolean(dataPengujian.tanggalPengujian.trim()) &&
+    Boolean(dataPengujian.namaPetugas1.trim()) &&
+    Boolean(dataPengujian.namaPetugas2.trim());
+
+  const isIdentitasUTTPFilled =
+    Boolean(identitasUTTP.merek.trim()) &&
+    Boolean(identitasUTTP.tipeModel.trim()) &&
+    Boolean(identitasUTTP.nomorSeri.trim()) &&
+    Boolean(identitasUTTP.jumlahNozzle.trim()) &&
+    Boolean(identitasUTTP.tahunPembuatan.trim());
+
+  const isKondisiOperasiFilled =
+    Boolean(kondisiOperasi.ujiAlkMaksimum.trim()) &&
+    Boolean(kondisiOperasi.ujiAlkMinimum.trim()) &&
+    Boolean(kondisiOperasi.mfr.trim()) &&
+    Boolean(kondisiOperasi.nomorPencacahTipe.trim());
+
+  const allChecklistFilled = checklist.every((item) => item.penilaian !== null);
+
+  const isFormValid =
+    isDataPengujianFilled &&
+    isIdentitasUTTPFilled &&
+    isKondisiOperasiFilled &&
+    allChecklistFilled;
+
   // ─── Submit Handler ──────────────────────────────────────────
 
   const handleSubmit = () => {
-    const payload = {
-      dataPengujian,
+    if (!isFormValid) return;
+    const payload: Step1Data = {
+      dataPengujian: {
+        ...dataPengujian,
+        noSPBU: formData?.step1?.dataPengujian?.noSPBU || '34.121.01',
+      },
       identitasUTTP,
       kondisiOperasi,
       checklist: checklist.map((item, i) => ({
@@ -132,10 +189,12 @@ export default function PemeriksaanAwalPage() {
       })),
     };
 
-    // TODO: Replace with actual API call
-    // e.g. await fetch('/api/pemeriksaan-awal', { method: 'POST', body: JSON.stringify(payload) });
-    console.log('Form payload:', payload);
-    alert('Validasi Pemeriksaan berhasil! (Data logged to console)');
+    if (updateFormData) {
+      updateFormData('step1', payload);
+    }
+    if (nextStep) {
+      nextStep();
+    }
   };
 
 // ─── Check Validation ──────────────────────────────────────────
@@ -487,11 +546,10 @@ export default function PemeriksaanAwalPage() {
         <button
           onClick={handleSubmit}
           disabled={!isFormValid}
-          className={`w-full py-4 rounded-xl text-[18px] font-semibold transition-all ${
-            isFormValid
-              ? 'bg-[#2479BC] text-white hover:bg-[#1d6aa6] active:scale-[0.99] cursor-pointer'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+          className={`w-full py-4 rounded-xl text-[18px] font-semibold transition-all ${isFormValid
+            ? 'bg-[#2479BC] text-white hover:bg-[#1d6aa6] active:scale-[0.99] cursor-pointer'
+            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
         >
           Validasi Pemeriksaan
         </button>

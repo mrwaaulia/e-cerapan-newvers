@@ -1,21 +1,35 @@
 import React from "react";
 
-export default function InfoCard() {
-  const identitasAlat = [
-    { label: "Merek", value: "Tokheim" },
-    { label: "Tipe", value: "Quantium 310" },
-    { label: "No. Seri", value: "SN-2023-TKH-0456" },
-    { label: "Jml. Nozzle", value: "2" },
-    { label: "Tahun Buat", value: "2022" },
-  ];
+export interface InfoItem {
+  label: string;
+  value: string;
+}
 
-  const dataPengujian = [
-    { label: "No. Pengujian", value: "PU-BBM-2024-0847" },
-    { label: "Tanggal", value: "2026-09-13" },
-    { label: "No. SPBU", value: "34.121.01" },
-    { label: "Petugas 1", value: "Ahmad Fauzi, S.T." },
-    { label: "Petugas 2", value: "Siti Rahayu, S.T." },
-  ];
+interface InfoCardProps {
+  identitasAlat?: InfoItem[];
+  dataPengujian?: InfoItem[];
+}
+
+const DEFAULT_IDENTITAS_ALAT: InfoItem[] = [
+  { label: "Merek", value: "Tokheim" },
+  { label: "Tipe", value: "Quantium 310" },
+  { label: "No. Seri", value: "SN-2023-TKH-0456" },
+  { label: "Jml. Nozzle", value: "2" },
+  { label: "Tahun Buat", value: "2022" },
+];
+
+const DEFAULT_DATA_PENGUJIAN: InfoItem[] = [
+  { label: "No. Pengujian", value: "PU-BBM-2024-0847" },
+  { label: "Tanggal", value: "2026-09-13" },
+  { label: "No. SPBU", value: "34.121.01" },
+  { label: "Petugas 1", value: "Ahmad Fauzi, S.T." },
+  { label: "Petugas 2", value: "Siti Rahayu, S.T." },
+];
+
+export default function InfoCard({
+  identitasAlat = DEFAULT_IDENTITAS_ALAT,
+  dataPengujian = DEFAULT_DATA_PENGUJIAN,
+}: InfoCardProps = {}) {
 
   return (
     <div className="grid grid-cols-2 gap-6">
