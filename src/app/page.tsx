@@ -1,12 +1,12 @@
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/customs/landings/Hero";
-import AboutSection from "@/components/customs/landings/AboutSection";
-import StepsSection from "@/components/customs/landings/StepsSection";
-import ServiceSection from "@/components/customs/landings/ServiceSection";
-import CtaSection from "@/components/customs/landings/CtaSection";
-import Footer from "@/components/Footer";
+import Hero from "@/components/landing/Hero";
+import AboutSection from "@/components/landing/AboutSection";
+import StepsSection from "@/components/landing/StepsSection";
+import ServiceSection from "@/components/landing/ServiceSection";
+import CtaSection from "@/components/landing/CtaSection";
+import Navbar from "@/components/landing/Navbar";
+import Footer from "@/components/landing/Footer";
 
-export default function Home() {
+export default function LandingPage() {
   return (
     <main>
       <Navbar />

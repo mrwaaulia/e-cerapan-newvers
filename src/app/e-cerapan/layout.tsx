@@ -1,22 +1,19 @@
-import TopBar from "@/components/e-cerapan/ui/TopBar";
-import SideBar from "@/components/e-cerapan/ui/SideBar";
+import AppHeader from "@/components/e-cerapan/layout/AppHeader";
+import Sidebar from "@/components/e-cerapan/layout/Sidebar";
 
-export default function ECerapanLayout({
+export default function EcerapanLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <div className="min-h-screen flex bg-[#F8FAFC] ">
-      <SideBar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="sticky top-0 z-20 border-[#E7EEFF] bg-white px-8 py-4 shadow-sm">
-          <TopBar />
-        </header>
+    <div className="min-h-screen">
+      <Sidebar />
 
-        <main className="flex-1 p-8 overflow-y-auto">
-          {children}
-        </main>
+      <div className="min-h-screen lg:pl-60">
+        <AppHeader />
+
+        <main className="mx-auto w-full max-w-350">{children}</main>
       </div>
     </div>
   );

@@ -1,20 +1,19 @@
-import { CreatorCard } from "@/components/customs/landings/Card";
-import { Check } from 'lucide-react'
+import { CreatorCard } from "@/components/landing/Card";
+import { Check } from "lucide-react";
 
 export default function StepsSection() {
   return (
-    <section className="py-10">
-      <div className="mx-auto max-w-content px-6 p-15 text-center text-white bg-blue-500 rounded-tl-[100px] rounded-br-[100px]">
+    <section id="steps" className="py-10">
+      <div className="mx-auto max-w-content px-6 p-15 text-center text-white bg-primary rounded-tl-[100px] rounded-br-[100px]">
         <div>
           <h2 className="text-2xl font-bold md:text-3xl">
             3 Langkah Kerja E-Cerapan
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-white/80">
-            Proses sederhana untuk memastikan alat ukur Anda tervalidasi
-            dengan baik.
+            Proses sederhana untuk memastikan alat ukur Anda tervalidasi dengan
+            baik.
           </p>
         </div>
-
 
         <div className="flex flex-col items-center justify-center gap-6 pt-10 sm:flex-row sm:gap-8 lg:gap-12">
           <CreatorCard
